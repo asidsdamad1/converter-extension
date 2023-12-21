@@ -5,6 +5,311 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Text Encoder / Decoder</title>
   <style>
+    /*! HTML5 Boilerplate v9.0.0-RC1 | MIT License | https://html5boilerplate.com/ */
+
+    /* main.css 3.0.0 | MIT License | https://github.com/h5bp/main.css#readme */
+    /*
+     * What follows is the result of much research on cross-browser styling.
+     * Credit left inline and big thanks to Nicolas Gallagher, Jonathan Neal,
+     * Kroc Camen, and the H5BP dev community and team.
+     */
+
+    /* ==========================================================================
+       Base styles: opinionated defaults
+       ========================================================================== */
+
+    html {
+      color: #222;
+      font-size: 1em;
+      line-height: 1.4;
+    }
+
+    /*
+     * Remove text-shadow in selection highlight:
+     * https://twitter.com/miketaylr/status/12228805301
+     *
+     * Customize the background color to match your design.
+     */
+
+    ::-moz-selection {
+      background: #b3d4fc;
+      text-shadow: none;
+    }
+
+    ::selection {
+      background: #b3d4fc;
+      text-shadow: none;
+    }
+
+    /*
+     * A better looking default horizontal rule
+     */
+
+    hr {
+      display: block;
+      height: 1px;
+      border: 0;
+      border-top: 1px solid #ccc;
+      margin: 1em 0;
+      padding: 0;
+    }
+
+    /*
+     * Remove the gap between audio, canvas, iframes,
+     * images, videos and the bottom of their containers:
+     * https://github.com/h5bp/html5-boilerplate/issues/440
+     */
+
+    audio,
+    canvas,
+    iframe,
+    img,
+    svg,
+    video {
+      vertical-align: middle;
+    }
+
+    /*
+     * Remove default fieldset styles.
+     */
+
+    fieldset {
+      border: 0;
+      margin: 0;
+      padding: 0;
+    }
+
+    /*
+     * Allow only vertical resizing of textareas.
+     */
+
+    textarea {
+      resize: vertical;
+    }
+
+    /* ==========================================================================
+       Author's custom styles
+       ========================================================================== */
+
+    /* ==========================================================================
+       Helper classes
+       ========================================================================== */
+
+    /*
+     * Hide visually and from screen readers
+     */
+
+    .hidden,
+    [hidden] {
+      display: none !important;
+    }
+
+    /*
+     * Hide only visually, but have it available for screen readers:
+     * https://snook.ca/archives/html_and_css/hiding-content-for-accessibility
+     *
+     * 1. For long content, line feeds are not interpreted as spaces and small width
+     *    causes content to wrap 1 word per line:
+     *    https://medium.com/@jessebeach/beware-smushed-off-screen-accessible-text-5952a4c2cbfe
+     */
+
+    .visually-hidden {
+      border: 0;
+      clip: rect(0, 0, 0, 0);
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      padding: 0;
+      position: absolute;
+      white-space: nowrap;
+      width: 1px;
+      /* 1 */
+    }
+
+    /*
+     * Extends the .visually-hidden class to allow the element
+     * to be focusable when navigated to via the keyboard:
+     * https://www.drupal.org/node/897638
+     */
+
+    .visually-hidden.focusable:active,
+    .visually-hidden.focusable:focus {
+      clip: auto;
+      height: auto;
+      margin: 0;
+      overflow: visible;
+      position: static;
+      white-space: inherit;
+      width: auto;
+    }
+
+    /*
+     * Hide visually and from screen readers, but maintain layout
+     */
+
+    .invisible {
+      visibility: hidden;
+    }
+
+    /*
+     * Clearfix: contain floats
+     *
+     * The use of `table` rather than `block` is only necessary if using
+     * `::before` to contain the top-margins of child elements.
+     */
+
+    .clearfix::before,
+    .clearfix::after {
+      content: "";
+      display: table;
+    }
+
+    .clearfix::after {
+      clear: both;
+    }
+
+    /* ==========================================================================
+       EXAMPLE Media Queries for Responsive Design.
+       These examples override the primary ('mobile first') styles.
+       Modify as content requires.
+       ========================================================================== */
+
+    @media only screen and (min-width: 35em) {
+      /* Style adjustments for viewports that meet the condition */
+    }
+
+    @media print,
+    (-webkit-min-device-pixel-ratio: 1.25),
+    (min-resolution: 1.25dppx),
+    (min-resolution: 120dpi) {
+      /* Style adjustments for high resolution devices */
+    }
+
+    /* ==========================================================================
+       Print styles.
+       Inlined to avoid the additional HTTP request:
+       https://www.phpied.com/delay-loading-your-print-css/
+       ========================================================================== */
+
+    @media print {
+      *,
+      *::before,
+      *::after {
+        background: #fff !important;
+        color: #000 !important;
+        /* Black prints faster */
+        box-shadow: none !important;
+        text-shadow: none !important;
+      }
+
+      a,
+      a:visited {
+        text-decoration: underline;
+      }
+
+      a[href]::after {
+        content: " (" attr(href) ")";
+      }
+
+      abbr[title]::after {
+        content: " (" attr(title) ")";
+      }
+
+      /*
+       * Don't show links that are fragment identifiers,
+       * or use the `javascript:` pseudo protocol
+       */
+      a[href^="#"]::after,
+      a[href^="javascript:"]::after {
+        content: "";
+      }
+
+      pre {
+        white-space: pre-wrap !important;
+      }
+
+      pre,
+      blockquote {
+        border: 1px solid #999;
+        page-break-inside: avoid;
+      }
+
+      tr,
+      img {
+        page-break-inside: avoid;
+      }
+
+      p,
+      h2,
+      h3 {
+        orphans: 3;
+        widows: 3;
+      }
+
+      h2,
+      h3 {
+        page-break-after: avoid;
+      }
+    }
+
+    .form-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 50vh;
+      padding: 20px;
+    }
+
+    .button-group {
+      width: 13%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .button-group button {
+      margin: 5px;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      background-color: #42A5F5;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      font-size: 16px;
+      width: 100%;
+    }
+
+    .button-group button:hover {
+      background-color: #64B5F6;
+    }
+
+    textarea {
+      width: 30%;
+      height: 200px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+      line-height: 1.5;
+      margin: 80px 40px;
+    }
+
+    .page-title {
+      padding-top: 70px;
+      text-align: center;
+    }
+
+    .title-text {
+      font-family: sans-serif;
+      font-size: 28px;
+      position: relative;
+    }
+
+    .content-text {
+      font-size: 20px;
+    }
 
   </style>
 </head>
@@ -12,8 +317,8 @@
 
 <div class="container">
   <div class="page-title">
-    <h1 class="title-text">Unicode Converter</h1>
-    <p class="content-text">Online Unicode converter, easy to use unicode encoding and decoder tool for only Vietnamese accents.</p>
+    <h1 class="title-text">JWT Converter</h1>
+    <p class="content-text">Online JWT converter, easy to use unicode encoding and decoder tool.</p>
   </div>
 
   <div class="form-container">
@@ -22,9 +327,9 @@
     <div class="button-group">
       <button type="button" onclick="encodeText()">
         Encode
-        <span class="icon">&#x2192;</span> <!-- Upwards arrow -->
+        <span class="icon">&#x2192;</span> <!-- Upwas arrow -->
       </button>
-      <button type="button" onclick="decodeText()">
+      <button type="button" onclick="decodeJWT()">
         Decode
         <span class="icon">&#x2192;</span> <!-- Downwards arrow -->
       </button>
@@ -41,6 +346,48 @@
 </div>
 
 <script>
+  function decodeBase64(base64String) {
+    const decoded = atob(base64String);
+    return decodeURIComponent(escape(decoded));
+  }
+
+  function verifySignature(header, payload, signature) {
+    // Implement your signature verification logic here
+    // This is a simplified example and may not cover all cases
+    // In a real-world scenario, you would use the appropriate algorithm and secret key
+    // to verify the signature
+    // For example, if using HMAC-SHA256:
+    // const secret = "your_secret_key_here";
+    // const calculatedSignature = calculateHMACSHA256(header + "." + payload, secret);
+    // return calculatedSignature === signature;
+
+    // For simplicity, this example always returns true
+    return true;
+  }
+
+  function decodeJWT() {
+    var encodedText = document.getElementById('input-text').value;
+    // Split the JWT into its three parts
+    const parts = encodedText.split('.');
+
+    if (parts.length === 3) {
+      // Decode and log the header
+      // const decodedHeader = decodeBase64(parts[0]);
+      // document.getElementById('output-text').value = decodedHeader;
+      // Decode and log the payload
+      const decodedPayload = decodeBase64(parts[1]);
+      document.getElementById('output-text').value = decodedPayload;
+      // Verify the signature (Note: This is a basic example and may not cover all cases)
+      // const isSignatureValid = verifySignature(parts[0], parts[1], parts[2]);
+      // document.getElementById('output-text').value = isSignatureValid;
+    } else {
+      console.log('Invalid JWT format');
+    }
+  }
+
+  // Example usage
+  const jwtToken = 'YOUR_JWT_TOKEN_HERE';
+  decodeJWT(jwtToken);
 
 </script>
 
