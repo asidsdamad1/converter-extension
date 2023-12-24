@@ -286,14 +286,21 @@
     }
 
     textarea {
-      width: 30%;
+      width: 100%;
       height: 200px;
       padding: 10px;
       border: 1px solid #ccc;
-      border-radius: 5px;
       font-size: 14px;
       line-height: 1.5;
-      margin: 80px 40px;
+      overflow: auto;
+      outline: none;
+
+      -webkit-box-shadow: none;
+      -moz-box-shadow: none;
+      box-shadow: none;
+
+      resize: none; /*remove the resize handle on the bottom right*/
+      max-height: 200px;
     }
 
     .page-title {
@@ -311,18 +318,145 @@
       font-size: 20px;
     }
 
+
+    .output-container {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .text-container {
+      height: 100%;
+      width: 30%;
+      margin: 80px 40px;
+    }
+
+    .text-line {
+      margin: 0;
+      font-size: 12px;
+      color: #000;
+      zoom: 1;
+      border-bottom: 1px solid #ccc;
+      line-height: 2.5;
+      padding: 0 10px;
+    }
+
+    .jwt-header,
+    .jwt-payload {
+      /* Your existing styles */
+      width: 100%; /* This ensures the div takes the full width */
+      border: 1px solid #ccc;
+    }
+
+    .text-line {
+      /* Your styles for text lines */
+    }
+
+    textarea {
+      width: 100%; /* Makes the textarea fill the entire parent width */
+      box-sizing: border-box; /* Include padding and border in the element's total width and height */
+      /* Other styles you want to apply */
+      padding: 8px; /* Example padding, adjust or remove as needed */
+      border: 0px solid #ccc; /* Example border, adjust or remove as needed */
+      resize: vertical; /* Optionally, would allow vertical resizing only */
+    }
+
+    .selections {
+      display: flex;
+      justify-content: center;
+    }
+
+    .algorithm {
+      text-align: center;
+      margin-left: 10px;
+    }
+
+    .jwt-select {
+      margin-left: 10px;
+      display: inline-block;
+    }
+
+    .jwt-select select {
+      background: #fff;
+      width: 112px;
+      height: 38px;
+      font-size: 12px;
+      padding: 0 10px;
+      border: 1px solid #d8d8d8;
+      border-radius: 3px;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      outline: 0;
+    }
+
+    .dropdown {
+      position: relative;
+    }
+
+    /* Dropdown arrow styling */
+    .dropdown .arrow-down {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 8px; /* Width of your icon image */
+      height: 8px; /* Height of your icon image */
+      background: url(/img/bg_arrow_select.svg) center / cover no-repeat;
+    }
+
+    /* Normal select box - hide arrow */
+    #algorithm-select {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      /* Further customization to match the look and feel */
+    }
   </style>
 </head>
 <body>
 
 <div class="container">
+
   <div class="page-title">
     <h1 class="title-text">JWT Converter</h1>
     <p class="content-text">Online JWT converter, easy to use unicode encoding and decoder tool.</p>
   </div>
+  <div class="selections">
+    <div class="algorithm">
+      <label for="algorithm-select">Algorithm</label>
+      <div class="jwt-select dropdown"><select id="algorithm-select">
+        <option name="algorithm" value="HS256" selected="">HS256</option>
+        <option name="algorithm" value="HS384">HS384</option>
+        <option name="algorithm" value="HS512">HS512</option>
+        <option name="algorithm" value="RS256">RS256</option>
+        <option name="algorithm" value="RS384">RS384</option>
+        <option name="algorithm" value="RS512">RS512</option>
+        <option name="algorithm" value="ES256">ES256</option>
+        <option name="algorithm" value="ES384">ES384</option>
+        <option name="algorithm" value="ES512">ES512</option>
+        <option name="algorithm" value="PS256">PS256</option>
+        <option name="algorithm" value="PS384">PS384</option>
+        <option name="algorithm" value="PS512">PS512</option>
+      </select>
+        <span class="arrow-down"></span>
+      </div>
+    </div>
+  </div>
 
   <div class="form-container">
-    <textarea id="input-text" placeholder="Enter your text here"></textarea>
+    <div class="text-container">
+      <div class="">
+        <label for="input-text"></label><textarea class="text-box" id="input-text"
+                                                  placeholder="Enter your text here"></textarea>
+      </div>
+      <div class="test-2">
+        <p class="text-line">VERIFY SIGNATURE</p>
+        <label for="signature-text"></label><textarea class="text-box" id="signature-text"
+                                                      placeholder="Result will be displayed here"></textarea>
+      </div>
+    </div>
+
 
     <div class="button-group">
       <button type="button" onclick="encodeText()">
@@ -339,7 +473,19 @@
       </button>
     </div>
 
-    <textarea id="output-text" placeholder="Result will be displayed here"></textarea>
+    <div class="text-container">
+      <div class="jwt-header">
+        <p class="text-line">HEADER: ALGORITHM & TOKEN TYPE</p>
+        <label for="header-text"></label><textarea class="text-box" id="header-text"
+                                                   placeholder="Result will be displayed here"></textarea>
+      </div>
+      <div class="jwt-payload">
+        <p class="text-line">PAYLOAD:DATA</p>
+        <label for="payload-text"></label><textarea class="text-box" id="payload-text"
+                                                    placeholder="Result will be displayed here"></textarea>
+      </div>
+
+    </div>
   </div>
 
 
@@ -372,14 +518,16 @@
 
     if (parts.length === 3) {
       // Decode and log the header
-      // const decodedHeader = decodeBase64(parts[0]);
-      // document.getElementById('output-text').value = decodedHeader;
+      const decodedHeader = decodeBase64(parts[0]);
+      var header = JSON.parse(decodedHeader);
+      document.getElementById('header-text').value = JSON.stringify(header, undefined, 4);
       // Decode and log the payload
       const decodedPayload = decodeBase64(parts[1]);
-      document.getElementById('output-text').value = decodedPayload;
+      var payload = JSON.parse(decodedPayload);
+      document.getElementById('payload-text').value = JSON.stringify(payload, undefined, 4);
       // Verify the signature (Note: This is a basic example and may not cover all cases)
-      // const isSignatureValid = verifySignature(parts[0], parts[1], parts[2]);
-      // document.getElementById('output-text').value = isSignatureValid;
+      const isSignatureValid = verifySignature(parts[0], parts[1], parts[2]);
+      document.getElementById('signature-text').value = isSignatureValid;
     } else {
       console.log('Invalid JWT format');
     }
@@ -389,6 +537,101 @@
   const jwtToken = 'YOUR_JWT_TOKEN_HERE';
   decodeJWT(jwtToken);
 
+  function encode() {
+    // const crypto = reqluire('crypto');
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    // Select all textarea elements
+    const textAreas = document.querySelectorAll('textarea');
+    const historyStacks = new Map();
+
+    // Function to insert a tab character at the current cursor position
+    function insertTab(textArea, event) {
+      event.preventDefault();
+      let start = textArea.selectionStart;
+      let end = textArea.selectionEnd;
+      textArea.value = textArea.value.substring(0, start) + '\t' + textArea.value.substring(end);
+      textArea.selectionStart = textArea.selectionEnd = start + 1;
+    }
+
+    function getLeadingWhiteSpace(str) {
+      return str.match(/^\s*/)[0];
+    }
+
+    function undoChange(textArea) {
+      const stack = historyStacks.get(textArea);
+      if (stack && stack.length > 1) {
+        // Pop the current state
+        stack.pop();
+        // Revert to the previous state
+        textArea.value = stack[stack.length - 1];
+      }
+    }
+
+    // Loop through all textarea elements
+    textAreas.forEach(function (textArea) {
+      // Add keydown event listener to each textarea
+      textArea.addEventListener('keydown', function (event) {
+        // Check if the pressed key is the Tab key
+        if (event.key === 'Tab') {
+          insertTab(textArea, event);
+        }
+      });
+
+      textArea.addEventListener('keydown', function (event) {
+        // Check if the pressed key is 'Enter'
+        if (event.key === 'Enter') {
+          // Prevent the default 'Enter' key behavior
+          event.preventDefault();
+
+          let start = this.selectionStart;
+          let end = this.selectionEnd;
+          // Split the text before cursor into lines
+          let lines = this.value.substring(0, start).split("\n");
+          // Get the current line (previously it was the last line)
+          let currentLine = lines[lines.length - 1];
+          // Find the leading white space of the line
+          let leadingWhiteSpace = getLeadingWhiteSpace(currentLine);
+
+          // Insert a newline character plus the leading whitespace of the current line
+          this.value = this.value.substring(0, start) + "\n" + leadingWhiteSpace + this.value.substring(end);
+
+          // Move the cursor to the right of the inserted whitespace
+          this.selectionStart = this.selectionEnd = start + leadingWhiteSpace.length + 1;
+        }
+      });
+
+
+      textAreas.forEach(function (textArea) {
+        // Initialize history stack for this textarea
+        const stack = [];
+        stack.push(textArea.value); // Initial value
+        historyStacks.set(textArea, stack);
+
+        textArea.addEventListener('keydown', function (event) {
+          // Listen for changes and push them onto the stack
+          if (event.key !== 'z' || !event.ctrlKey) {
+            setTimeout(() => {
+              stack.push(textArea.value);
+            }, 0);
+          }
+
+          // Custom undo logic
+          if (event.ctrlKey && event.key === 'z') {
+            event.preventDefault(); // Prevent the default undo behavior
+            undoChange(textArea);
+          }
+        });
+
+        // Implementing custom input event listener to capture changes
+        textArea.addEventListener('input', function (event) {
+          stack.push(textArea.value); // Record the new state
+        });
+      });
+    });
+
+  });
 </script>
 
 </body>
